@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${user_config.python_bin}",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/markitdown_hook.py"],
+            "timeout": 120,
+            "statusMessage": "Converting referenced documents with markitdown..."
+          }
+        ]
+      }
+    ]
+  }
+}

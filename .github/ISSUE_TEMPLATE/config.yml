@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Conversion quality problem
+    url: https://github.com/microsoft/markitdown/issues
+    about: >
+      If a document converts but the markdown itself is wrong or garbled, that
+      is markitdown's extraction rather than this hook. This hook decides
+      whether a conversion is usable; markitdown produces it.
+  - name: Security issue
+    url: https://github.com/AndrewAvery7/claude-markitdown-hook/security/advisories/new
+    about: Please report vulnerabilities privately rather than in a public issue.

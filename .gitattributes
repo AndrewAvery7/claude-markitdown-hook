@@ -1,0 +1,25 @@
+# Normalise line endings in the repository and pin what each file type gets on
+# checkout. The hook is executed by Claude Code on Windows, macOS and Linux, so
+# the engine must stay LF: a .py checked out with CRLF is harmless to Python but
+# breaks the shebang if anyone runs it directly on a POSIX host.
+* text=auto eol=lf
+
+*.py        text eol=lf
+*.sh        text eol=lf
+*.md        text eol=lf
+*.json      text eol=lf
+*.yml       text eol=lf
+*.yaml      text eol=lf
+
+*.ps1       text eol=crlf
+*.cmd       text eol=crlf
+*.bat       text eol=crlf
+
+*.png       binary
+*.jpg       binary
+*.gif       binary
+*.pdf       binary
+
+# Keep generated media out of language statistics so the repo is reported as
+# what it actually is: Python.
+assets/**   linguist-documentation

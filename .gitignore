@@ -1,0 +1,20 @@
+# Conversion cache (machine-local, regenerated on demand)
+markitdown-cache/
+
+# Backups the installer creates
+*.bak-*
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+
+# Test fixtures are generated at run time, never committed
+tests/_generated/
+
+# OS noise
+.DS_Store
+Thumbs.db
+desktop.ini

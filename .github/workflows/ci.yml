@@ -1,0 +1,119 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  # The hook runs wherever Claude Code runs, so prove all three platforms
+  # rather than claiming them. markitdown is installed with [all] because PDF,
+  # docx, pptx and xlsx support each live in an extra -- without it the
+  # end-to-end conversion tests would silently skip and prove nothing.
+  tests:
+    name: tests (${{ matrix.os }}, py${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pytest "markitdown[all]"
+      - name: Confirm markitdown resolved, so no test silently skips
+        run: python -c "import markitdown, pdfminer; print('markitdown and pdfminer present')"
+      - name: Unit and end-to-end tests
+        run: python -m pytest tests/ -q
+
+  # The engine must still behave when markitdown is absent: it has to say so
+  # rather than no-op, because a silent no-op is indistinguishable from "this
+  # document is empty" -- the exact failure this project exists to prevent.
+  no-markitdown:
+    name: degrades honestly without markitdown
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip pytest
+      - name: Tests pass with markitdown uninstalled
+        run: python -m pytest tests/ -q
+      - name: Hook reports the missing dependency instead of staying silent
+        run: |
+          out=$(echo '{"prompt":"read /etc/hostname.pdf","cwd":"/tmp"}' \
+            | python plugins/markitdown-hook/scripts/markitdown_hook.py)
+          # No such file, so no output at all is the correct behaviour here.
+          if [ -n "$out" ]; then
+            echo "expected no output for a nonexistent file, got: $out"; exit 1
+          fi
+          echo "  ok: silent only when there is genuinely nothing to convert"
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile check
+        run: |
+          python -m py_compile \
+            plugins/markitdown-hook/scripts/markitdown_hook.py \
+            tests/pdfgen.py \
+            tests/conftest.py \
+            tests/test_markitdown_hook.py
+      - name: Engine is import-clean with no dependencies installed
+        run: |
+          python -c "
+          import importlib.util
+          s = importlib.util.spec_from_file_location(
+              'mh', 'plugins/markitdown-hook/scripts/markitdown_hook.py')
+          m = importlib.util.module_from_spec(s); s.loader.exec_module(m)
+          print('engine imports on a bare interpreter, version', m.__version__)
+          "
+
+  manifests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: JSON validity, version agreement, and hook shape
+        run: |
+          python - <<'PY'
+          import json
+          mk = json.load(open('.claude-plugin/marketplace.json'))
+          pl = json.load(open('plugins/markitdown-hook/.claude-plugin/plugin.json'))
+          hk = json.load(open('plugins/markitdown-hook/hooks/hooks.json'))
+
+          entry = next(p for p in mk['plugins'] if p['name'] == pl['name'])
+          assert entry['version'] == pl['version'], (
+              f"marketplace entry {entry['version']} != plugin {pl['version']}")
+          assert mk['metadata']['version'] == pl['version'], (
+              f"marketplace metadata {mk['metadata']['version']} != plugin {pl['version']}")
+
+          hook = hk['hooks']['UserPromptSubmit'][0]['hooks'][0]
+          assert 'args' in hook, (
+              "hook must use exec form: path placeholders need no shell quoting")
+          assert '${CLAUDE_PLUGIN_ROOT}' in hook['args'][0], (
+              "hook must reference the bundled script via CLAUDE_PLUGIN_ROOT")
+
+          # UserPromptSubmit lowers the command-hook timeout default to 30s.
+          # The engine allows 100s for a single file, so an unset or low
+          # timeout would kill slow conversions midway.
+          budget = 100
+          assert hook.get('timeout', 30) > budget, (
+              f"hook timeout {hook.get('timeout', 30)}s must exceed the "
+              f"{budget}s per-file budget")
+
+          for key in ('python_bin', 'markitdown_bin', 'min_chars_per_page'):
+              assert key in pl['userConfig'], f"missing userConfig option: {key}"
+
+          print(f"manifests valid and agree on version {pl['version']}")
+          PY

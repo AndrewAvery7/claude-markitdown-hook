@@ -1,0 +1,40 @@
+{
+  "name": "markitdown-hook",
+  "version": "1.0.0",
+  "description": "Convert PDFs and Office documents referenced in your prompt to markdown, and inject a pointer instead of the content - so a 200-page PDF costs almost nothing until Claude actually needs it. Grades every conversion, so an image-only PDF is reported honestly instead of silently arriving empty.",
+  "author": {
+    "name": "AndrewAvery7"
+  },
+  "homepage": "https://github.com/AndrewAvery7/claude-markitdown-hook",
+  "repository": "https://github.com/AndrewAvery7/claude-markitdown-hook",
+  "license": "MIT",
+  "keywords": [
+    "markitdown",
+    "pdf",
+    "document-ingestion",
+    "hook",
+    "context-efficiency",
+    "claude-code"
+  ],
+  "userConfig": {
+    "python_bin": {
+      "type": "string",
+      "title": "Python interpreter",
+      "description": "Command used to run the hook. Defaults to python3, which is correct on macOS and Linux. On Windows set this to python (python3 is usually not installed there). Must be Python 3.10 or newer, the floor markitdown itself requires.",
+      "default": "python3"
+    },
+    "markitdown_bin": {
+      "type": "string",
+      "title": "markitdown path (optional)",
+      "description": "Leave empty to auto-detect markitdown on PATH or via 'python -m markitdown'. Set an absolute path only if auto-detection picks the wrong one, for example when markitdown lives in a virtualenv."
+    },
+    "min_chars_per_page": {
+      "type": "number",
+      "title": "Minimum characters per PDF page",
+      "description": "A PDF yielding fewer characters per page than this is treated as image-based, so Claude is told to read the original with vision instead of a near-empty conversion. Real text PDFs measure 650-950; image-only PDFs measure 0-40. Lower this only if you work with genuinely sparse documents.",
+      "default": 100,
+      "min": 0,
+      "max": 5000
+    }
+  }
+}

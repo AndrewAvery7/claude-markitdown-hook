@@ -1,0 +1,31 @@
+name: Feature request
+description: Suggest an improvement
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: >
+        Describe the situation you hit, not just the feature. The design
+        constraints in CONTRIBUTING.md are tight — standard library only, no
+        copyleft in the core path, never report an empty conversion as a success
+        — so knowing the underlying problem usually leads to a better fit.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you like it to do?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What did you try instead?
+      description: >
+        Existing configuration often covers more than it appears to — the
+        threshold, the handled extension list, the cache location and the
+        timeouts are all adjustable.
