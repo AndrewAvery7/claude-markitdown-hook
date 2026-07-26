@@ -110,9 +110,19 @@ the install fails without quotes.
 Then `/plugin install markitdown-hook`. Claude Code prompts for the settings
 described below at enable time.
 
+Or non-interactively, which lets you set the interpreter in the same step:
+
+```bash
+claude plugin marketplace add AndrewAvery7/claude-markitdown-hook
+claude plugin install markitdown-hook@claude-markitdown-hook --config python_bin=python
+```
+
 > **Windows users:** set the *Python interpreter* option to `python`. It
 > defaults to `python3`, which is correct on macOS and Linux but usually absent
-> on Windows.
+> on Windows. If the hook then stays silent, see
+> [the Windows note in TROUBLESHOOTING](docs/TROUBLESHOOTING.md#the-hook-does-nothing-at-all).
+
+Restart Claude Code after installing so the hook loads.
 
 ### Option 2 — manual install
 

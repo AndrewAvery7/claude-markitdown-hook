@@ -16,7 +16,34 @@ python3 --version    # macOS, Linux
 python --version     # Windows
 ```
 
-Then set the option accordingly and run `/reload-plugins`.
+Then set the option accordingly and restart Claude Code. (`/reload-plugins`
+also works, but only in the interactive terminal — it is unavailable in the
+desktop app, where a full restart is the way.)
+
+**Windows: a passing `--version` is not conclusive.** Plugin hooks run in *exec
+form*, which spawns the interpreter directly with no shell. On Windows, `python`
+often resolves to a zero-byte app-execution alias in `WindowsApps` rather than a
+real executable:
+
+```powershell
+(Get-Command python).Source          # ...\WindowsApps\python.exe
+(Get-Item (Get-Command python).Source -Force).Length   # 0
+```
+
+That alias usually forwards correctly, and a bare `python` is fine on most
+machines. But the shell resolves it and the hook does not, so `python --version`
+can succeed while the hook stays silent — and if no Python is installed from the
+Store, the alias opens the Microsoft Store instead of running anything.
+
+If the hook is silent on Windows and everything else checks out, set the
+*Python interpreter* option to the **absolute path** of a real interpreter:
+
+```powershell
+python -c "import sys; print(sys.executable)"
+```
+
+Use that path verbatim. The trade-off is that an absolute path will not follow a
+future Python upgrade, so revisit it if you move or reinstall Python.
 
 **Check the hook fires at all.** Run it by hand with a real payload:
 
