@@ -17,6 +17,18 @@
   <a href="https://github.com/AndrewAvery7/claude-markitdown-hook/actions/workflows/ci.yml"><img src="https://github.com/AndrewAvery7/claude-markitdown-hook/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
 </p>
 
+<p align="center">
+  <a href="https://github.com/AndrewAvery7/claude-markitdown-hook/releases/latest/download/claude-markitdown-hook-promo.mp4">
+    <img src="assets/social-card.png" alt="Watch the 66-second walkthrough" width="760">
+  </a>
+</p>
+
+<p align="center">
+  <i>66 seconds &mdash; the same PDF and the same question, answered wrong and then right.</i>
+  &nbsp;·&nbsp;
+  <a href="https://github.com/AndrewAvery7/claude-markitdown-hook/releases/latest/download/claude-markitdown-hook-promo.mp4">Watch the walkthrough</a>
+</p>
+
 ---
 
 ## The problem

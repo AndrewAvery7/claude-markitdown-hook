@@ -4,6 +4,11 @@ markitdown-cache/
 # Backups the installer creates
 *.bak-*
 
+# Promo video intermediates and output. All regenerable from tools/, and the
+# finished MP4 ships as a release asset rather than bloating every clone.
+assets/*.mp4
+assets/*.gif
+
 # Python
 __pycache__/
 *.pyc

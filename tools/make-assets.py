@@ -136,7 +136,13 @@ def fit_font(draw, text, kind, size, max_w):
     return load(kind, size)
 
 
-def make_logo(colours, path):
+def make_logo(colours, path, divisor=SCALE):
+    """Render the lockup. A smaller divisor yields a larger final image.
+
+    The promo's end card needs the logo at roughly half the frame width, so it
+    is emitted at divisor=2 rather than upscaling the README-sized file, which
+    would be visibly soft on a 1080p card.
+    """
     h = 120 * SCALE
     text_size = 38 * SCALE
     text_x = 104 * SCALE
@@ -149,7 +155,7 @@ def make_logo(colours, path):
     d = ImageDraw.Draw(img)
     badge(d, 8 * SCALE, (120 - 76) // 2 * SCALE, 76 * SCALE, colours)
     wordmark(d, text_x, 76 * SCALE, colours, text_size)
-    img = img.resize((img.width // SCALE, img.height // SCALE), Image.LANCZOS)
+    img = img.resize((img.width // divisor, img.height // divisor), Image.LANCZOS)
     img.save(path)
     return img.size
 
@@ -207,6 +213,39 @@ def make_social_card(colours, path):
     return img.size
 
 
+def make_title_overlay(path):
+    """Lower-third for the promo's hero shot: 1920x1080, transparent.
+
+    Composited over the AI opening clip by tools/stitch-promo.sh and faded in
+    and out there, so this is a still image with no motion of its own.
+    """
+    w, h = 1920, 1080
+    img = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+
+    x, base_y = 140, 856
+    # Accent rule anchoring the block to the left edge of the frame.
+    d.rounded_rectangle([x, base_y - 66, x + 7, base_y + 34], radius=3,
+                        fill=(59, 130, 246, 255))
+
+    tx = x + 34
+    parts = [("claude-", "medium", (148, 163, 184, 255)),
+             ("markitdown", "bold", (255, 255, 255, 255)),
+             ("-hook", "medium", (148, 163, 184, 255))]
+    for text, kind, colour in parts:
+        f = load(kind, 62)
+        d.text((tx, base_y), text, font=f, fill=colour, anchor="ls")
+        tx += d.textlength(text, font=f)
+
+    sub = load("medium", 34)
+    d.text((x + 34, base_y + 60),
+           "Cheap, honest document ingestion for Claude Code.",
+           font=sub, fill=(203, 213, 225, 255), anchor="ls")
+
+    img.save(path)
+    return img.size
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     print("font (bold)  :", find_font("bold"))
@@ -216,6 +255,10 @@ def main():
         ("logo-dark.png", make_logo(DARK, os.path.join(OUT, "logo-dark.png"))),
         ("social-card.png",
          make_social_card(LIGHT, os.path.join(OUT, "social-card.png"))),
+        ("title-overlay.png",
+         make_title_overlay(os.path.join(OUT, "title-overlay.png"))),
+        ("endcard-logo.png",
+         make_logo(DARK, os.path.join(OUT, "endcard-logo.png"), divisor=2)),
     ]:
         print("wrote {:18} {}".format(name, size))
 
