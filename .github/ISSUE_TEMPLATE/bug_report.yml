@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Before filing, [docs/TROUBLESHOOTING.md](../blob/main/docs/TROUBLESHOOTING.md)
+        Before filing, [docs/TROUBLESHOOTING.md](https://github.com/AndrewAvery7/claude-markitdown-hook/blob/main/docs/TROUBLESHOOTING.md)
         covers the two most common causes: the wrong Python interpreter, and a
         `markitdown` installed without the `[pdf]` extra.
 

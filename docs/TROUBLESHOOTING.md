@@ -135,5 +135,6 @@ nothing is not reported as converted and writes no file. If you see it, the
 `.md` was probably produced by an older version of the hook and is still cached.
 Clear the cache as above.
 
-Please also [open an issue](../../issues) — that is precisely the failure this
+Please also [open an issue](https://github.com/AndrewAvery7/claude-markitdown-hook/issues)
+— that is precisely the failure this
 project exists to prevent, and a reproducible case is worth having.
