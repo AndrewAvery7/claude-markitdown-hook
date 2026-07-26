@@ -17,16 +17,12 @@
   <a href="https://github.com/AndrewAvery7/claude-markitdown-hook/actions/workflows/ci.yml"><img src="https://github.com/AndrewAvery7/claude-markitdown-hook/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
 </p>
 
-<p align="center">
-  <a href="https://github.com/AndrewAvery7/claude-markitdown-hook/releases/latest/download/claude-markitdown-hook-promo.mp4">
-    <img src="assets/social-card.png" alt="Watch the 66-second walkthrough" width="760">
-  </a>
-</p>
+https://github.com/user-attachments/assets/d1fb58b9-8cda-45e8-b37d-893b938b78c4
 
 <p align="center">
-  <i>75 seconds &mdash; the same PDF and the same question, answered wrong and then right.</i>
+  <i>75 seconds &mdash; press play, and hit &#128266; to unmute (GitHub starts videos silent).</i>
   &nbsp;·&nbsp;
-  <a href="https://github.com/AndrewAvery7/claude-markitdown-hook/releases/latest/download/claude-markitdown-hook-promo.mp4">Watch the walkthrough</a>
+  <a href="https://github.com/AndrewAvery7/claude-markitdown-hook/releases/latest/download/claude-markitdown-hook-promo.mp4">Download the MP4</a>
 </p>
 
 ---
