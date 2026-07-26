@@ -5,6 +5,34 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] — 2026-07-25
+
+### Added
+
+- **`--doctor`.** One command reporting everything the troubleshooting guide
+  previously asked you to check by hand: which interpreter is running, whether
+  markitdown resolved and how, whether pdfminer is present, whether the cache is
+  writable, and every configuration value in effect along with what set it.
+  Exits `0` when the hook can do its job and `1` when it cannot, so it works in
+  a script — and it runs on a bare interpreter, where reporting what is missing
+  is the entire point.
+- **`--version`.**
+- CI now runs the doctor on all three platforms as a genuine smoke test of
+  discovery, imports and cache access, and asserts it fails loudly with an
+  actionable fix when markitdown is absent.
+- CI checks the engine's `__version__` against both manifests. The doctor prints
+  it, so drift would mislead anyone reporting a bug.
+- `dependabot.yml` keeps the workflow actions current. Left alone they rot
+  quietly: a pinned major eventually loses its runtime and the badge goes red
+  without anyone touching the code.
+
+### Changed
+
+- Workflow actions moved to `actions/checkout@v7` and `actions/setup-python@v7`.
+  The previous pins were being force-migrated off a deprecated Node runtime.
+- `docs/TROUBLESHOOTING.md` now leads with the doctor instead of hand-run
+  Python snippets.
+
 ## [1.0.0] — 2026-07-25
 
 First public release.
@@ -41,4 +69,5 @@ First public release.
 - Test suite with synthetic PDF fixtures built in pure Python, so no real
   document is ever committed and the suite runs on a bare interpreter.
 
+[1.1.0]: https://github.com/AndrewAvery7/claude-markitdown-hook/releases/tag/v1.1.0
 [1.0.0]: https://github.com/AndrewAvery7/claude-markitdown-hook/releases/tag/v1.0.0

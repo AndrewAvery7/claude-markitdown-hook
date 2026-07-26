@@ -1,0 +1,14 @@
+version: 2
+updates:
+  # The engine itself has no dependencies by design, so the only thing here
+  # that ages is the workflow actions. Left alone they rot quietly: a pinned
+  # major eventually loses its runtime and the badge goes red without anyone
+  # having touched the code.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "ci"
+    labels:
+      - dependencies

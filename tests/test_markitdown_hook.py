@@ -352,6 +352,66 @@ def test_reports_when_markitdown_is_missing(engine, tmp_path):
         out["hookSpecificOutput"]["additionalContext"]
 
 
+# --------------------------------------------------------------------------
+# Diagnostics
+# --------------------------------------------------------------------------
+
+def _doctor(mod):
+    out = io.StringIO()
+    stdout, sys.stdout = sys.stdout, out
+    try:
+        code = mod.doctor()
+    finally:
+        sys.stdout = stdout
+    return code, out.getvalue()
+
+
+def test_doctor_reports_every_section(mh):
+    _, text = _doctor(mh)
+    for section in ("interpreter", "markitdown", "pdf support", "cache",
+                    "configuration"):
+        assert section in text, section
+    assert mh.__version__ in text
+
+
+def test_doctor_fails_when_markitdown_is_missing(mh):
+    """The case a stuck user is actually in, and it must exit non-zero."""
+    mh.find_markitdown = lambda: None
+    code, text = _doctor(mh)
+    assert code == 1
+    assert "NOT FOUND" in text
+    assert "NOT READY" in text
+    assert 'pip install "markitdown[all]"' in text
+
+
+@needs_markitdown
+def test_doctor_succeeds_when_markitdown_is_present(mh):
+    code, text = _doctor(mh)
+    assert code == 0
+    assert "READY" in text
+    assert "NOT READY" not in text
+
+
+def test_doctor_shows_where_a_setting_came_from(engine):
+    """A wrong value is only debuggable if you can see what set it."""
+    m = engine(MARKITDOWN_HOOK_MIN_CHARS_PER_PAGE=250)
+    _, text = _doctor(m)
+    assert "250" in text
+    assert "MARKITDOWN_HOOK_MIN_CHARS_PER_PAGE" in text
+    plain = engine()
+    _, text2 = _doctor(plain)
+    assert "(default)" in text2
+
+
+def test_doctor_reports_an_unwritable_cache(engine, tmp_path):
+    blocker = tmp_path / "not-a-dir"
+    blocker.write_text("this is a file, so makedirs must fail")
+    m = engine(MARKITDOWN_HOOK_CACHE=str(blocker / "cache"))
+    code, text = _doctor(m)
+    assert "writable" in text
+    assert code == 1, "an unusable cache directory is not a ready state"
+
+
 def test_excess_files_are_reported_not_dropped_silently(engine, tmp_path):
     m = engine(MARKITDOWN_HOOK_MAX_FILES=2)
     m.find_markitdown = lambda: None  # discovery result is irrelevant here

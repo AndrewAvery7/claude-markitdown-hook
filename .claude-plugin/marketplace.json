@@ -5,13 +5,13 @@
   },
   "metadata": {
     "description": "Cheap, honest document ingestion for Claude Code. Converts referenced PDFs and Office files to markdown and injects a pointer, not the content - and never reports a conversion that recovered nothing.",
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "plugins": [
     {
       "name": "markitdown-hook",
       "description": "Convert PDFs and Office documents referenced in your prompt to markdown, inject a pointer instead of the content, and grade every conversion so image-only PDFs are reported honestly rather than silently arriving empty.",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "author": {
         "name": "AndrewAvery7"
       },

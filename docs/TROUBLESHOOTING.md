@@ -1,5 +1,33 @@
 # Troubleshooting
 
+## Start here: run the doctor
+
+```bash
+python3 /path/to/markitdown_hook.py --doctor
+```
+
+It reports everything this page used to ask you to check by hand — which
+interpreter is running, whether markitdown resolved and how, whether pdfminer
+is present, whether the cache is writable, and every configuration value
+actually in effect along with what set it. It exits `0` when the hook can do
+its job and `1` when it cannot, so it is also usable in a script.
+
+Run it with the **same interpreter the hook uses** — on a plugin install, the
+one named in the *Python interpreter* option. Running it with a different
+Python is itself a common source of confusion, and the first line of output
+tells you which one you got.
+
+```
+markitdown
+  resolved        NOT FOUND
+  fix             pip install "markitdown[all]"
+
+NOT READY
+```
+
+Most problems are diagnosed and fixed from that output alone. The sections
+below explain the causes in more depth.
+
 ## The hook does nothing at all
 
 No status message, no context note, as if it were not installed.

@@ -24,7 +24,7 @@ import shutil
 import subprocess
 import sys
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 
 def _env(default, *names):
@@ -49,6 +49,14 @@ def _env_int(default, *names):
         return int(_env("", *names))
     except (TypeError, ValueError):
         return default
+
+
+def _env_source(*names):
+    """Which of names actually supplied a value, or None for the default."""
+    for n in names:
+        if os.environ.get(n, "").strip():
+            return n
+    return None
 
 
 # --- Configuration (all overridable by environment variable) ----------------
@@ -436,7 +444,118 @@ def main():
     print(json.dumps(out))
 
 
+def _markitdown_version(mid):
+    try:
+        r = subprocess.run(mid + ["--version"], capture_output=True,
+                           text=True, timeout=30)
+        out = (r.stdout or r.stderr).strip().splitlines()
+        return out[0] if out else "unknown"
+    except Exception:
+        return "could not run"
+
+
+def doctor():
+    """Report whether this hook can actually do its job. Exit 0 if it can.
+
+    Everything TROUBLESHOOTING.md used to ask people to check by hand, in one
+    command -- and safe to run on a bare interpreter, where reporting what is
+    missing is the whole point.
+    """
+    def row(k, v, note=""):
+        v = str(v)
+        if note:
+            print("  {:<16}{:<32}{}".format(k, v, note))
+        else:
+            print("  {:<16}{}".format(k, v))
+
+    print("claude-markitdown-hook {}\n".format(__version__))
+
+    print("interpreter")
+    row("python", sys.executable)
+    row("version", sys.version.split()[0],
+        "" if sys.version_info >= (3, 10) else "TOO OLD - markitdown needs 3.10+")
+    row("platform", sys.platform)
+
+    print("\nmarkitdown")
+    mid = find_markitdown()
+    if mid is None:
+        row("resolved", "NOT FOUND")
+        row("fix", 'pip install "markitdown[all]"')
+    else:
+        override = _env_source("CLAUDE_PLUGIN_OPTION_MARKITDOWN_BIN",
+                               "MARKITDOWN_BIN")
+        via = ("set by " + override if override
+               else "python -m" if len(mid) > 1 else "found on PATH")
+        row("resolved", " ".join(mid))
+        row("via", via)
+        row("version", _markitdown_version(mid))
+
+    print("\npdf support")
+    try:
+        from pdfminer.pdfpage import PDFPage  # noqa: F401
+        row("pdfminer", "present", "page-density grading available")
+    except Exception:
+        row("pdfminer", "ABSENT",
+            'PDFs fall back to a flat size check - pip install "markitdown[all]"')
+    try:
+        import fitz  # noqa: F401
+        row("PyMuPDF", "present", "optional deep extractor enabled")
+    except Exception:
+        row("PyMuPDF", "absent", "optional; AGPL, deliberately not required")
+
+    print("\ncache")
+    row("directory", CACHE_DIR)
+    writable = False
+    try:
+        os.makedirs(CACHE_DIR, exist_ok=True)
+        probe = os.path.join(CACHE_DIR, ".doctor-probe")
+        with open(probe, "w") as f:
+            f.write("ok")
+        os.remove(probe)
+        writable = True
+    except OSError as e:
+        row("writable", "NO", str(e)[:60])
+    if writable:
+        try:
+            files = [f for f in os.listdir(CACHE_DIR) if f.endswith(".md")]
+            size = sum(os.path.getsize(os.path.join(CACHE_DIR, f)) for f in files)
+            row("writable", "yes",
+                "{} conversion(s), {:.1f} KB".format(len(files), size / 1024))
+        except OSError:
+            row("writable", "yes")
+
+    print("\nconfiguration")
+    settings = [
+        ("min chars/page", MIN_CHARS_PER_PAGE,
+         ("CLAUDE_PLUGIN_OPTION_MIN_CHARS_PER_PAGE",
+          "MARKITDOWN_HOOK_MIN_CHARS_PER_PAGE")),
+        ("timeout", "{} s".format(PER_FILE_TIMEOUT),
+         ("MARKITDOWN_HOOK_TIMEOUT",)),
+        ("max files", MAX_FILES, ("MARKITDOWN_HOOK_MAX_FILES",)),
+        ("cache days", CACHE_MAX_AGE_DAYS, ("MARKITDOWN_HOOK_CACHE_DAYS",)),
+        ("extensions", "{} formats".format(len(EXTS)),
+         ("MARKITDOWN_HOOK_EXTS",)),
+    ]
+    for label, value, names in settings:
+        src = _env_source(*names)
+        row(label, value, "from " + src if src else "(default)")
+
+    ready = mid is not None and writable and sys.version_info >= (3, 10)
+    print("\n{}".format("READY" if ready else "NOT READY"))
+    if not ready:
+        print("The hook will report the problem rather than fail silently, but "
+              "no documents will be converted until it is fixed.")
+    return 0 if ready else 1
+
+
 if __name__ == "__main__":
+    # Diagnostics run outside the never-block guard below: a doctor that
+    # swallowed its own errors and exited 0 would be worse than useless.
+    if len(sys.argv) > 1 and sys.argv[1] in ("--doctor", "doctor"):
+        sys.exit(doctor())
+    if len(sys.argv) > 1 and sys.argv[1] in ("--version", "-V"):
+        print(__version__)
+        sys.exit(0)
     try:
         main()
     except Exception:

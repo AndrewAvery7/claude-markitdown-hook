@@ -183,6 +183,27 @@ markitdown is located in this order: the explicit setting, then `markitdown` on
 `PATH`, then `python -m markitdown` using the interpreter running the hook —
 which is what works inside a virtualenv that exposes no console script.
 
+## Something not working?
+
+```bash
+python3 /path/to/markitdown_hook.py --doctor
+```
+
+Reports which interpreter is running, whether markitdown resolved and how,
+whether pdfminer is present, whether the cache is writable, and every setting in
+effect with what set it. Exits `0` when the hook can do its job, `1` when it
+cannot.
+
+```
+markitdown
+  resolved        NOT FOUND
+  fix             pip install "markitdown[all]"
+
+NOT READY
+```
+
+More depth in [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md).
+
 ## Good to know
 
 - **Handled by default:** `.pdf`, `.docx`, `.pptx`, `.xlsx`, `.xls`, `.epub`,
