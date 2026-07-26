@@ -51,6 +51,17 @@ BED_LEN=$(calc "$TOTAL - $MUSIC_START")
 
 echo "core=${CORE_LEN}s  xfade1@${OFF1}s  xfade2@${OFF2}s  music@${MUSIC_START}s  total=${TOTAL}s"
 
+# A bed shorter than the stretch it has to cover does not error: atrim just
+# yields what exists and the piece ends in silence. Fail loudly instead - a
+# quiet ending is exactly the kind of defect nobody notices until it ships.
+BED_HAVE=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$BED")
+if awk "BEGIN{exit !($BED_HAVE < $BED_LEN)}"; then
+  echo "ERROR: music bed is ${BED_HAVE}s but ${BED_LEN}s is needed" >&2
+  echo "       (total ${TOTAL}s minus music start ${MUSIC_START}s)" >&2
+  exit 1
+fi
+echo "bed=${BED_HAVE}s covers ${BED_LEN}s needed"
+
 ffmpeg -y -i "$HERO" -i "$CORE" -i "$END" \
        -loop 1 -i "$OVERLAY" -loop 1 -i "$LOGO" -i "$BED" -filter_complex "
 [0:v]trim=0:${HERO_LEN},setpts=PTS-STARTPTS,scale=1920:1080,fps=24,format=yuva420p[hv];

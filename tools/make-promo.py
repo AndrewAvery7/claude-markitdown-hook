@@ -560,18 +560,24 @@ def scene_install(fr, n):
     return im
 
 
-# Frame counts are tuned for READABILITY. All animation inside a scene is a
-# fraction of its length, so raising a number genuinely slows the motion
-# (including typing) rather than holding a static frame for longer.
+# (scene, total frames, animated frames). Everything animates within the second
+# number; the remaining frames hold the finished composition so there is time to
+# actually READ it. Every scene expresses its motion through seg()/ease()/typed(),
+# all of which clamp, so rendering past the animated length simply persists the
+# final state - while the real frame index keeps advancing, so a caret carries on
+# blinking and the held frame stays alive rather than freezing.
+#
+# Hold time is weighted by reading burden: the dense terminal, bar-chart and
+# hook-message scenes get the most, the two short quote scenes the least.
 SCENES = [
-    (scene_prompt, 150),          # 6.25s - read the prompt and see the page
-    (scene_silent_failure, 190),  # 7.92s - five terminal lines, the core reveal
-    (scene_the_lie, 155),         # 6.46s - the wrong answer lands
-    (scene_measure, 190),         # 7.92s - four bars grow, threshold appears
-    (scene_honest, 195),          # 8.13s - six lines of the real message
-    (scene_truth, 160),           # 6.67s - the payoff
-    (scene_economics, 165),       # 6.88s
-    (scene_install, 175),         # 7.29s - read and memorise the command
+    (scene_prompt, 164, 150),          # 6.83s - prompt typed, page revealed
+    (scene_silent_failure, 222, 190),  # 9.25s - five terminal lines to absorb
+    (scene_the_lie, 175, 155),         # 7.29s - two short lines, lands fast
+    (scene_measure, 220, 190),         # 9.17s - four bars, values, threshold
+    (scene_honest, 235, 195),          # 9.79s - six dense lines, the heaviest
+    (scene_truth, 180, 160),           # 7.50s - the payoff
+    (scene_economics, 185, 165),       # 7.71s - pointer plus three lines
+    (scene_install, 203, 175),         # 8.46s - read and memorise the command
 ]
 
 
@@ -585,11 +591,14 @@ def main():
 
     tmp = Path(tempfile.mkdtemp(prefix="cmh-promo-"))
     idx = 0
-    for fn, count in SCENES:
+    for fn, count, anim in SCENES:
         for f in range(count):
-            fn(f, count).save(tmp / "f{:05d}.png".format(idx))
+            # Pass the ANIMATED length as the denominator: past it the scene's
+            # clamped timings hold the final composition, giving reading time.
+            fn(f, anim).save(tmp / "f{:05d}.png".format(idx))
             idx += 1
-        print("  {}: {} frames".format(fn.__name__, count))
+        print("  {}: {} frames ({} animated + {} hold)".format(
+            fn.__name__, count, anim, count - anim))
     print("total {} frames = {:.1f}s".format(idx, idx / FPS))
 
     if not shutil.which("ffmpeg"):

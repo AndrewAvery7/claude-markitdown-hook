@@ -24,7 +24,7 @@
 </p>
 
 <p align="center">
-  <i>66 seconds &mdash; the same PDF and the same question, answered wrong and then right.</i>
+  <i>75 seconds &mdash; the same PDF and the same question, answered wrong and then right.</i>
   &nbsp;·&nbsp;
   <a href="https://github.com/AndrewAvery7/claude-markitdown-hook/releases/latest/download/claude-markitdown-hook-promo.mp4">Watch the walkthrough</a>
 </p>
