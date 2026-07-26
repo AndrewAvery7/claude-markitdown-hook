@@ -7,6 +7,14 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Added
+
+- CI also runs on a weekly schedule (Mondays), not only on pushes. The suite
+  installs the latest markitdown release, so upstream breakage surfaces within
+  a week even when this repository is untouched — and the public Actions
+  history becomes a living record that the tests keep passing, not a snapshot
+  of the last push.
+
 ### Fixed
 
 - `docs/TESTING.md` reported test counts from before the `--doctor` work landed

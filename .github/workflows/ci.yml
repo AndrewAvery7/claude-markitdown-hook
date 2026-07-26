@@ -4,6 +4,13 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Weekly re-run against whatever markitdown/pdfminer ship that day: the suite
+  # installs the latest release, so upstream breakage surfaces within a week
+  # even when this repo is untouched — and the public run history stays a
+  # living record rather than a snapshot of the last push. (GitHub pauses
+  # scheduled workflows after ~60 days without repo activity.)
+  schedule:
+    - cron: "17 11 * * 1"
 
 jobs:
   # The hook runs wherever Claude Code runs, so prove all three platforms
