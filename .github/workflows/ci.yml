@@ -69,7 +69,9 @@ jobs:
             plugins/markitdown-hook/scripts/markitdown_hook.py \
             tests/pdfgen.py \
             tests/conftest.py \
-            tests/test_markitdown_hook.py
+            tests/test_markitdown_hook.py \
+            tools/make-assets.py \
+            tools/make-promo.py
       - name: Engine is import-clean with no dependencies installed
         run: |
           python -c "
@@ -79,6 +81,15 @@ jobs:
           m = importlib.util.module_from_spec(s); s.loader.exec_module(m)
           print('engine imports on a bare interpreter, version', m.__version__)
           "
+
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: shellcheck the build tooling
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y shellcheck
+          shellcheck -S error tools/*.sh
 
   manifests:
     runs-on: ubuntu-latest
