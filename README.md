@@ -7,7 +7,7 @@
 
 <p align="center">
   <b>Cheap, honest document ingestion for Claude Code.</b><br>
-  Converts the PDFs and Office files you mention to markdown, hands Claude a pointer instead of the contents &mdash; and never claims a conversion that recovered nothing.
+  Converts the PDFs and Office files you mention to markdown, hands Claude a pointer instead of the contents &mdash; and never claims a conversion that recovered nothing. markitdown exits 0 when it extracts nothing.
 </p>
 
 <p align="center">
