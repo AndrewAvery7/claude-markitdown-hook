@@ -5,6 +5,17 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- `docs/TESTING.md` reported test counts from before the `--doctor` work landed
+  (35/1 full install, 29/7 bare) and described four CI jobs. Re-measured: 40
+  passed and 1 skipped with a full install, 34 passed and 7 skipped on a bare
+  interpreter, across five jobs. The doctor's own six tests had no entry in the
+  coverage table. A project whose entire argument is "measure it, don't assert
+  it" cannot ship stale numbers in its own documentation.
+
 ## [1.1.0] — 2026-07-25
 
 ### Added

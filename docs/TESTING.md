@@ -16,6 +16,7 @@ python -m pytest tests/ -q
 | Input parsing | plain JSON and UTF-8 BOM |
 | Cache | zero-byte pruning, key stability, reuse of good results, rejection of stale empties |
 | End to end | text PDF converts, image-only PDF is refused, sparse PDF is refused, mixed batches report per file, missing markitdown is announced |
+| Diagnostics | `--doctor` reports every section, exits non-zero without markitdown, exits zero with it, names the source of each setting, and reports an unwritable cache |
 
 The negative cases carry the most weight. An image-only PDF must not be reported
 as converted, must not leave a cached artifact, and must not be described to
@@ -44,8 +45,8 @@ and writes 0 bytes.
 ## Skips are meaningful
 
 Tests requiring markitdown or pdfminer skip cleanly when those are absent, so
-the suite passes on a bare interpreter (29 passed, 7 skipped) as well as a full
-install (35 passed, 1 skipped on Windows).
+the suite passes on a bare interpreter (34 passed, 7 skipped) as well as a full
+install (40 passed, 1 skipped on Windows).
 
 Because a skip proves nothing, CI installs `markitdown[all]` and asserts the
 import succeeds *before* running the suite — otherwise a broken dependency would
@@ -58,9 +59,10 @@ platform asserts the behaviour the other must not have.
 
 ## CI
 
-`.github/workflows/ci.yml` runs four jobs:
+`.github/workflows/ci.yml` runs five jobs:
 
-- **tests** — the suite on Windows, macOS and Linux against Python 3.10 and 3.12
-- **no-markitdown** — the suite on a bare interpreter, proving honest degradation
+- **tests** — the suite on Windows, macOS and Linux against Python 3.10 and 3.12, then `--doctor` and `--version` on each as a real smoke test of discovery, imports and cache access
+- **no-markitdown** — the suite on a bare interpreter, proving honest degradation, and asserting the doctor fails loudly with an actionable fix
 - **lint** — `py_compile`, plus an import check on an interpreter with no dependencies
-- **manifests** — JSON validity, version agreement across manifests, and hook shape (exec form, `CLAUDE_PLUGIN_ROOT`, timeout above the per-file budget)
+- **shellcheck** — the build tooling in `tools/*.sh`
+- **manifests** — JSON validity, version agreement across manifests and the engine's `__version__`, and hook shape (exec form, `CLAUDE_PLUGIN_ROOT`, timeout above the per-file budget)
