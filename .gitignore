@@ -23,3 +23,7 @@ tests/_generated/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Graphify knowledge-graph output (personal tooling; contains local paths -
+# must never ship in a public repo)
+graphify-out/
