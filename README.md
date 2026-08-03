@@ -222,6 +222,7 @@ More depth in [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md).
 - [docs/DESIGN.md](docs/DESIGN.md) — why grading works this way, and the data behind the threshold
 - [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) — the hook does nothing, wrong interpreter, virtualenvs
 - [docs/TESTING.md](docs/TESTING.md) — running the suite, and how the synthetic PDFs are built
+- [docs/PROMO.md](docs/PROMO.md) — how the video above is built, and why its first frame is a title card
 
 ## Caveats (honest edges)
 
