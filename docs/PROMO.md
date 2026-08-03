@@ -1,6 +1,6 @@
 # The promo video
 
-`claude-markitdown-hook-promo.mp4` — 1:16, 1920×1080, shipped as a **release
+`claude-markitdown-hook-promo.mp4` — 1:15, 1920×1080, shipped as a **release
 asset** rather than committed. `assets/*.mp4` is gitignored: at ~9 MB the file
 would be by far the heaviest thing here, and every rebuild would add another
 copy to history forever.

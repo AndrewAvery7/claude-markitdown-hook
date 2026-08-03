@@ -14,6 +14,19 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   a week even when this repository is untouched — and the public Actions
   history becomes a living record that the tests keep passing, not a snapshot
   of the last push.
+- **The promo opens on a title card**, so the README shows the project rather
+  than a black rectangle. GitHub generates its inline player from a bare
+  `user-attachments` URL and its markdown sanitiser strips author-written
+  `<video>`, so there is no `poster` a README can set — the browser shows frame
+  0, and frame 0 was the generative hero shot before its light builds. The card
+  composites `assets/endcard-logo.png` rather than redrawing the mark, and every
+  line on it is a claim the README already makes. `tools/make-title-card.py`
+  builds it; `tools/prepend-title-card.sh` applies it to a finished film, which
+  is how it was applied here — the bookends and music bed that built the
+  original were never committed. The video is now 1:15 rather than 1:14, and the
+  release asset has been replaced.
+- `docs/PROMO.md` — how the promo is built, why its first frame is a title card,
+  and the publishing steps. The video had no documentation at all before this.
 
 ### Fixed
 
