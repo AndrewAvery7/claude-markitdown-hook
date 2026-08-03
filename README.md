@@ -17,10 +17,20 @@
   <a href="https://github.com/AndrewAvery7/claude-markitdown-hook/actions/workflows/ci.yml"><img src="https://github.com/AndrewAvery7/claude-markitdown-hook/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
 </p>
 
-https://github.com/user-attachments/assets/d1fb58b9-8cda-45e8-b37d-893b938b78c4
+<!-- PROMO-VIDEO. A bare user-attachments URL on its own line: GitHub turns that
+     into an inline player, and takes the thumbnail from frame 0 — which is why
+     the video opens on a title card. Markdown image or link syntax does NOT
+     produce a player, and a release-asset URL downloads instead of playing.
+
+     Attachments are immutable, so a new cut needs a new upload and a new URL.
+     The URL only exists once the comment it was dragged into is SUBMITTED; an
+     abandoned draft uploads the file but does not keep it. Verify before
+     committing — live answers 302 or 403, dead answers 404. See docs/PROMO.md. -->
+
+https://github.com/user-attachments/assets/6f91aabe-1deb-48e5-9eb1-2fd7875efa52
 
 <p align="center">
-  <i>75 seconds &mdash; press play, and hit &#128266; to unmute (GitHub starts videos silent).</i>
+  <i>1 minute 15 &mdash; press play, and hit &#128266; to unmute (GitHub starts videos silent).</i>
   &nbsp;·&nbsp;
   <a href="https://github.com/AndrewAvery7/claude-markitdown-hook/releases/latest/download/claude-markitdown-hook-promo.mp4">Download the MP4</a>
 </p>
