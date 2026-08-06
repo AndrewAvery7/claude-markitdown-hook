@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Manual trigger exists so the Healthchecks wiring below can be proven without
+  # waiting a week for the cron.
+  workflow_dispatch:
   # Weekly re-run against whatever markitdown/pdfminer ship that day: the suite
   # installs the latest release, so upstream breakage surfaces within a week
   # even when this repo is untouched — and the public run history stays a
@@ -159,3 +162,35 @@ jobs:
 
           print(f"manifests and engine agree on version {pl['version']}")
           PY
+
+  # Dead-man's-switch for the weekly schedule. The note at the top of this file
+  # already records that GitHub pauses scheduled workflows after ~60 days of
+  # repo inactivity -- but knowing it and detecting it are different things, and
+  # nothing here detected it. That matters more here than in most repos: the
+  # weekly run is the only thing watching for upstream markitdown/pdfminer
+  # breakage, so a paused cron silently ends the surveillance this repo exists
+  # to provide, and it looks exactly like a quiet week.
+  #
+  # Gated to schedule and manual runs deliberately: pinging on push would keep
+  # the check green off the back of ordinary commits while the cron sat paused.
+  ping:
+    name: report the weekly run to Healthchecks
+    needs: [tests, no-markitdown, lint, shellcheck, manifests]
+    if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping
+        env:
+          HC_PING_KEY: ${{ secrets.HC_PING_KEY }}
+          FAILED: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
+        run: |
+          if [ -z "${HC_PING_KEY:-}" ]; then
+            echo "HC_PING_KEY not configured - skipping ping."
+            exit 0
+          fi
+          suffix=""
+          if [ "$FAILED" = "true" ]; then suffix="/fail"; fi
+          # Never fail the run over its own monitoring.
+          curl -fsS -m 10 --retry 3 \
+            "https://hc-ping.com/${HC_PING_KEY}/markitdown-hook-weekly-ci${suffix}" \
+            || echo "Healthchecks ping failed - not failing the run over it."
