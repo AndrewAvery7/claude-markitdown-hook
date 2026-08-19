@@ -233,6 +233,7 @@ More depth in [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md).
 - [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) — the hook does nothing, wrong interpreter, virtualenvs
 - [docs/TESTING.md](docs/TESTING.md) — running the suite, and how the synthetic PDFs are built
 - [docs/PROMO.md](docs/PROMO.md) — how the video above is built, and why its first frame is a title card
+- [My AI said the PDF was empty. The PDF was not empty.](https://dev.to/andrewavery7/my-ai-said-the-pdf-was-empty-the-pdf-was-not-empty-1b1l) — the story behind the density threshold, on dev.to
 
 ## Caveats (honest edges)
 
