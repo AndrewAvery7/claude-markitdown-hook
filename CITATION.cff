@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use claude-markitdown-hook in your work, please cite it as below."
+type: software
+title: "claude-markitdown-hook"
+abstract: >-
+  A Claude Code plugin for cheap, honest document ingestion. It converts
+  referenced PDFs and Office files to markdown and hands the assistant a pointer
+  rather than the raw contents, avoiding the token cost of rendering document
+  pages as images. Its distinguishing behaviour is failure honesty: the
+  underlying converter exits successfully even when it extracts nothing, so the
+  hook detects near-empty output and reports the conversion as failed instead of
+  silently presenting an empty document as a complete one.
+authors:
+  - family-names: Avery
+    given-names: Andrew
+    orcid: "https://orcid.org/0009-0005-5476-1213"
+repository-code: "https://github.com/AndrewAvery7/claude-markitdown-hook"
+license: MIT
+version: 1.1.1
+date-released: "2026-08-30"
+keywords:
+  - document conversion
+  - retrieval
+  - claude code
+  - markitdown
+  - failure detection
+  - developer tooling

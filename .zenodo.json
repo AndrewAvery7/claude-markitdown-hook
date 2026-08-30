@@ -1,0 +1,21 @@
+{
+  "title": "claude-markitdown-hook: honest document ingestion for AI coding assistants",
+  "description": "<p>A Claude Code plugin for cheap, honest document ingestion. It converts referenced PDFs and Office files to markdown and hands the assistant a pointer rather than the raw contents, avoiding the substantial token cost of rendering document pages as images.</p><p>Its distinguishing behaviour is failure honesty. The underlying converter exits with a success code even when it extracts nothing &mdash; the common case for scanned documents that are images rather than text &mdash; which means a naive integration will present an empty document to the model as though conversion had succeeded. The hook detects near-empty output and reports the conversion as failed, so the assistant falls back to reading the file directly rather than confidently describing a document it never received.</p>",
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "MIT",
+  "creators": [
+    {
+      "name": "Avery, Andrew",
+      "orcid": "0009-0005-5476-1213"
+    }
+  ],
+  "keywords": [
+    "document conversion",
+    "retrieval",
+    "Claude Code",
+    "markitdown",
+    "failure detection",
+    "developer tooling"
+  ]
+}

@@ -27,6 +27,11 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   release asset has been replaced.
 - `docs/PROMO.md` — how the promo is built, why its first frame is a title card,
   and the publishing steps. The video had no documentation at all before this.
+- **`CITATION.cff` and `.zenodo.json`.** The repository can now be cited. GitHub
+  renders a "Cite this repository" button from the first; the second tells
+  Zenodo how to describe each release it archives, so that releases from here
+  receive a DOI and are attributed to an ORCID iD rather than to a bare GitHub
+  username.
 
 ### Fixed
 
