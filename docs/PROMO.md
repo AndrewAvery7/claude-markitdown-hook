@@ -64,3 +64,13 @@ its first frame.
    ```bash
    curl -sS -o /dev/null -w '%{http_code}\n' -I https://github.com/user-attachments/assets/<uuid>
    ```
+
+## Release automation
+
+The README's "Download the MP4" link uses `/releases/latest/download/`, which returns
+404 for any release that lacks the file. `.github/workflows/release-promo.yml` runs
+whenever a release is published and copies the promo from the most recent earlier
+release that carries it, so the link keeps working. If no earlier release has it, the
+run warns instead of failing. It can also be run by hand (Actions, "Attach promo
+video to release") with a tag. A new or re-rendered promo still has to be attached to
+a release manually once; later releases then inherit it.

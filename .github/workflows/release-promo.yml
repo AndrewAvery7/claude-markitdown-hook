@@ -1,0 +1,51 @@
+name: Attach promo video to release
+
+# The README's "Download the MP4" link points at /releases/latest/download/,
+# which 404s on any release that does not carry the file. The video is a release
+# asset (not committed, see docs/PROMO.md), so each new release copies it forward
+# from the most recent earlier release that has it.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to attach the promo video to
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  promo:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+      TAG: ${{ github.event.release.tag_name || inputs.tag }}
+      ASSET: claude-markitdown-hook-promo.mp4
+    steps:
+      - name: Copy the promo video onto this release
+        run: |
+          set -euo pipefail
+          has_asset() {
+            local names
+            names=$(gh release view "$1" -R "$REPO" --json assets --jq '.assets[].name')
+            grep -qx "$ASSET" <<<"$names"
+          }
+          if has_asset "$TAG"; then
+            echo "$TAG already carries $ASSET - nothing to do."
+            exit 0
+          fi
+          SRC=""
+          for t in $(gh release list -R "$REPO" --exclude-drafts --limit 50 --json tagName --jq '.[].tagName'); do
+            if [ "$t" != "$TAG" ] && has_asset "$t"; then SRC="$t"; break; fi
+          done
+          if [ -z "$SRC" ]; then
+            echo "::warning::No earlier release carries $ASSET; attach it by hand (see docs/PROMO.md)."
+            exit 0
+          fi
+          echo "Copying $ASSET from $SRC to $TAG"
+          gh release download "$SRC" -R "$REPO" -p "$ASSET" -D "$RUNNER_TEMP"
+          gh release upload "$TAG" "$RUNNER_TEMP/$ASSET" -R "$REPO"
